@@ -63,9 +63,13 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 }); // Middleware for CORS
+
+//! --------- PASSPORT --------------
+const passport = require("./config/passport.config");
+app.use(passport.initialize());
 
 //* Static
 app.use("/static", express.static(paths.public));
@@ -147,6 +151,10 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("❌ Usuario desconectado:", socket.id);
   });
+});
+
+server.listen(config.PORT, () => {
+  console.log(`🚀 Servidor escuchando en http://localhost:${config.PORT}`);
 });
 
 // Exportar el server para que pueda ser iniciado desde index.js
