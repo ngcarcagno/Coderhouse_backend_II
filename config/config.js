@@ -59,6 +59,31 @@ const config = {
     timeout: parseInt(process.env.DB_TIMEOUT) || 5000,
     socketTimeout: parseInt(process.env.DB_SOCKET_TIMEOUT) || 45000,
   },
+
+  // Configuración de Email
+  email: {
+    service: process.env.EMAIL_SERVICE || "gmail",
+    host: process.env.EMAIL_HOST || "smtp.gmail.com",
+    port: parseInt(process.env.EMAIL_PORT) || 587,
+    secure: process.env.EMAIL_SECURE === "true", // true para 465, false para 587
+    user: process.env.EMAIL_USER || "",
+    password: process.env.EMAIL_PASSWORD || "",
+    fromName: process.env.EMAIL_FROM_NAME || "E-commerce Backend II",
+  },
+
+  // JWT y Seguridad
+  jwt: {
+    secret: process.env.JWT_SECRET || "secret-key-default",
+    expiresIn: process.env.JWT_EXPIRES_IN || "24h",
+    resetSecret: process.env.JWT_RESET_SECRET || "reset-secret-default",
+    resetExpiresIn: process.env.JWT_RESET_EXPIRES_IN || "1h",
+  },
+
+  // URLs del Frontend
+  frontend: {
+    url: process.env.FRONTEND_URL || "http://localhost:3000",
+    resetPasswordPath: process.env.RESET_PASSWORD_PATH || "/reset-password",
+  },
 };
 
 module.exports = config;

@@ -81,6 +81,28 @@ header.site-header {
   font-weight: 600;
   text-align: center;
 }
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.header-nav {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.nav-link {
+  text-decoration: none;
+  color: #555;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+.nav-link:hover {
+  background: #f0f0f0;
+  color: var(--primary);
+}
 .container {
   margin-top: 60px;
   padding: 20px;

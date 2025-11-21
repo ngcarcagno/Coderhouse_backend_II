@@ -1,453 +1,379 @@
-# 🛒 E-commerce API con Sistema de Autenticación JWT
+# E-commerce API REST
 
-API REST para e-commerce con sistema completo de autenticación y autorización usando JWT (JSON Web Tokens), Passport.js y bcrypt.
+API completa de e-commerce desarrollada con Node.js, Express y MongoDB. Incluye sistema de autenticación JWT, gestión de productos, carritos de compra y un frontend funcional con notificaciones en tiempo real.
 
----
+## Características principales
 
-## 📋 TABLA DE CONTENIDOS
+- Sistema de autenticación con JWT y cookies HTTP-only
+- Gestión completa de productos con paginación y filtros
+- Carritos de compra con proceso de checkout
+- Panel de administración para productos en tiempo real (Socket.io)
+- Sistema de notificaciones tipo toast
+- Recuperación de contraseña por email
+- Middleware de autorización por roles (user/admin)
+- Frontend responsive con Handlebars
 
-- [Características](#-características)
-- [Tecnologías](#-tecnologías)
-- [Estructura del Proyecto](#-estructura-del-proyecto)
-- [Instalación](#-instalación)
-- [Configuración](#-configuración)
-- [Endpoints](#-endpoints)
-- [Arquitectura](#-arquitectura)
-- [Seguridad](#-seguridad)
-- [Testing](#-testing)
+## Tecnologías utilizadas
 
----
+**Backend:**
 
-## ✨ CARACTERÍSTICAS
+- Node.js + Express 5
+- MongoDB + Mongoose 8
+- Passport.js + JWT para autenticación
+- bcrypt para encriptación de contraseñas
+- Socket.io para comunicación en tiempo real
+- Nodemailer para envío de emails
 
-- ✅ **CRUD de Usuarios** completo
-- ✅ **Registro y Login** con validación
-- ✅ **Encriptación de contraseñas** con bcrypt
-- ✅ **Autenticación JWT** stateless
-- ✅ **Autorización basada en roles** (user/admin)
-- ✅ **Validación de tokens** con Passport.js
-- ✅ **Endpoint /current** para validar sesión
-- ✅ **Carrito automático** al registrarse
-- ✅ **Conexión a MongoDB Atlas**
+**Frontend:**
 
----
+- Handlebars como motor de plantillas
+- CSS vanilla con diseño responsive
+- JavaScript moderno (ES6+)
+- Sistema de notificaciones personalizado
 
-## 🛠️ TECNOLOGÍAS
-
-| Tecnología             | Propósito                        |
-| ---------------------- | -------------------------------- |
-| **Node.js + Express**  | Backend framework                |
-| **MongoDB + Mongoose** | Base de datos NoSQL              |
-| **bcrypt**             | Encriptación de contraseñas      |
-| **jsonwebtoken**       | Generación y verificación de JWT |
-| **Passport.js**        | Middleware de autenticación      |
-| **passport-jwt**       | Estrategia JWT para Passport     |
-| **Socket.io**          | WebSockets para tiempo real      |
-| **Handlebars**         | Motor de plantillas              |
-
----
-
-## 📁 ESTRUCTURA DEL PROYECTO
+## Estructura del proyecto
 
 ```
-api-server-express/
-│
+ecommerce-api-rest/
 ├── config/
-│   └── config.js              # Configuración general (DB, paths, env)
+│   ├── config.js                   # Configuración general
+│   └── passport.config.js          # Estrategias de autenticación
 │
 ├── src/
-│   ├── config/
-│   │   └── passport.config.js # Configuración de Passport y estrategias JWT
-│   │
-│   ├── controllers/
-│   │   ├── sessions.controller.js  # Lógica de registro/login/current
+│   ├── controllers/                # Lógica de negocio
+│   │   ├── sessions.controller.js
 │   │   ├── products.controller.js
-│   │   └── carts.controller.js
+│   │   ├── carts.controller.js
+│   │   └── views.controller.js
 │   │
-│   ├── dao/                   # Data Access Objects
+│   ├── dao/                        # Acceso a datos
 │   │   ├── products.dao.db.js
-│   │   └── carts.dao.db.js
+│   │   ├── carts.dao.db.js
+│   │   └── ...
 │   │
-│   ├── middlewares/
-│   │   ├── auth.middleware.js      # Middlewares de autenticación
-│   │   └── upload.middleware.js
-│   │
-│   ├── models/
-│   │   ├── user.model.js      # ⭐ Modelo User con encriptación
+│   ├── models/                     # Modelos de Mongoose
+│   │   ├── user.model.js
+│   │   ├── product.model.js
 │   │   ├── cart.model.js
-│   │   └── product.model.js
+│   │   └── ticket.model.js
 │   │
-│   ├── routes/
-│   │   ├── sessions.routes.js # ⭐ Rutas de autenticación
+│   ├── routes/                     # Definición de rutas
+│   │   ├── sessions.routes.js
 │   │   ├── products.routes.js
 │   │   ├── carts.routes.js
-│   │   └── index.js
+│   │   └── views.routes.js
 │   │
-│   ├── services/
-│   │   ├── products.service.js
-│   │   └── carts.service.js
+│   ├── middlewares/                # Middleware personalizado
+│   │   ├── auth.middleware.js      # Autenticación y autorización
+│   │   ├── error.middleware.js     # Manejo de errores
+│   │   └── views-auth.middleware.js
 │   │
-│   ├── utils/
-│   │   ├── jwt.utils.js       # ⭐ Utilidades para JWT
-│   │   └── helpers.js
+│   ├── utils/                      # Utilidades
+│   │   ├── jwt.utils.js
+│   │   ├── response.util.js
+│   │   └── errors.util.js
 │   │
-│   └── views/                 # Plantillas Handlebars
+│   └── views/                      # Plantillas Handlebars
+│       ├── layouts/
+│       ├── pages/
+│       └── partials/
 │
-├── .env                       # Variables de entorno (¡NO subir a Git!)
-├── package.json
-└── server.js                  # Punto de entrada
+├── public/                         # Archivos estáticos
+│   ├── css/
+│   └── js/
+│
+├── .env.test                       # Variables de entorno (ejemplo)
+└── server.js                       # Punto de entrada
 ```
 
----
+## Instalación
 
-## 🚀 INSTALACIÓN
+### Requisitos previos
 
-### 1. Clonar el repositorio
+- Node.js 18 o superior
+- MongoDB Atlas (cuenta gratuita) **O** usar la base de datos incluida
+- Git
+
+### Inicio Rápido (Para Profesores/Evaluadores)
+
+El proyecto ya incluye credenciales de MongoDB configuradas para pruebas:
 
 ```bash
-git clone <tu-repositorio>
-cd api-server-express
+git clone https://github.com/ngcarcagno/Coderhouse_backend_II.git
+cd ecommerce-api-rest
+npm install
+npm start
 ```
 
-### 2. Instalar dependencias
+✅ **El servidor se conectará automáticamente a la base de datos de prueba.**
+
+### Instalación Completa (Desarrollo)
+
+1. **Clonar el repositorio**
+
+```bash
+git clone https://github.com/ngcarcagno/Coderhouse_backend_II.git
+cd ecommerce-api-rest
+```
+
+2. **Instalar dependencias**
 
 ```bash
 npm install
 ```
 
-### 3. Configurar variables de entorno
+3. **Configurar variables de entorno (opcional)**
 
-Edita el archivo `.env` con tus credenciales:
+El archivo `.env.test` ya está configurado y funcional. Si deseas usar tu propia base de datos, edita `.env.test`:
 
 ```env
 # MongoDB
-MONGO_URI=mongodb+srv://<USER>:<PASSWORD>@<CLUSTER>/<DB_NAME>
-DB_NAME=NeumaJet
 DB_USER=tu_usuario
-DB_PASSWORD=tu_password
+DB_PASSWORD=tu_contraseña
+DB_NAME=tu_base_datos
 DB_CLUSTER=tu_cluster.mongodb.net
-
-# Servidor
-NODE_ENV=development
-PORT=8080
-
-# JWT
-JWT_SECRET=tu_clave_super_secreta_cambiar_en_produccion_2024
 ```
 
-### 4. Iniciar el servidor
+4. **Iniciar el servidor**
 
 ```bash
-# Modo desarrollo (con nodemon)
-npm run dev
-
-# Modo producción
+# Modo producción (usa .env.test)
 npm start
+
+# Modo desarrollo con auto-reload
+npm run dev
 ```
 
-El servidor estará corriendo en `http://localhost:8080`
+El servidor estará disponible en `http://localhost:8080`
 
----
+### Verificar la Conexión
 
-## ⚙️ CONFIGURACIÓN
+Si todo funciona correctamente, verás en la consola:
 
-### MongoDB Atlas
-
-1. Crea una cuenta en [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Crea un cluster gratuito
-3. Crea un usuario de base de datos
-4. Obtén la URI de conexión
-5. Configúrala en `.env`
-
-### JWT Secret
-
-La clave secreta JWT debe ser una cadena larga y aleatoria:
-
-```bash
-# Generar una clave segura (en terminal):
-node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+Conexión a MongoDB exitosa
+Servidor escuchando en puerto 8080
 ```
 
----
+## Endpoints principales
 
-## 🔐 ENDPOINTS
+### Autenticación (`/api/sessions`)
 
-### Autenticación
+| Método | Ruta                     | Descripción             | Requiere auth |
+| ------ | ------------------------ | ----------------------- | ------------- |
+| POST   | `/register`              | Registrar nuevo usuario | No            |
+| POST   | `/login`                 | Iniciar sesión          | No            |
+| GET    | `/current`               | Obtener usuario actual  | Sí            |
+| POST   | `/logout`                | Cerrar sesión           | No            |
+| POST   | `/forgot-password`       | Solicitar recuperación  | No            |
+| POST   | `/reset-password/:token` | Restablecer contraseña  | No            |
 
-| Método | Endpoint                 | Descripción                  | Auth Requerida |
-| ------ | ------------------------ | ---------------------------- | -------------- |
-| POST   | `/api/sessions/register` | Registrar nuevo usuario      | No             |
-| POST   | `/api/sessions/login`    | Iniciar sesión (obtener JWT) | No             |
-| GET    | `/api/sessions/current`  | Obtener usuario actual       | **Sí** ✅      |
-| POST   | `/api/sessions/logout`   | Cerrar sesión (informativo)  | No             |
+### Productos (`/api/products`)
 
-### Productos
+| Método | Ruta    | Descripción                 | Requiere auth |
+| ------ | ------- | --------------------------- | ------------- |
+| GET    | `/`     | Listar productos (paginado) | No            |
+| GET    | `/:pid` | Obtener producto específico | No            |
+| POST   | `/`     | Crear producto              | Admin         |
+| PUT    | `/:pid` | Actualizar producto         | Admin         |
+| DELETE | `/:pid` | Eliminar producto           | Admin         |
 
-| Método | Endpoint            | Descripción             | Auth Requerida |
-| ------ | ------------------- | ----------------------- | -------------- |
-| GET    | `/api/products`     | Listar productos        | No             |
-| GET    | `/api/products/:id` | Obtener producto por ID | No             |
-| POST   | `/api/products`     | Crear producto          | Opcional       |
-| PUT    | `/api/products/:id` | Actualizar producto     | Opcional       |
-| DELETE | `/api/products/:id` | Eliminar producto       | Opcional       |
+### Carritos (`/api/carts`)
 
-### Carritos
+| Método | Ruta                  | Descripción         | Requiere auth |
+| ------ | --------------------- | ------------------- | ------------- |
+| GET    | `/:cid`               | Ver carrito         | Sí            |
+| POST   | `/:cid/products/:pid` | Agregar producto    | Sí            |
+| PUT    | `/:cid/products/:pid` | Actualizar cantidad | Sí            |
+| DELETE | `/:cid/products/:pid` | Eliminar producto   | Sí            |
+| DELETE | `/:cid`               | Vaciar carrito      | Sí            |
+| POST   | `/:cid/purchase`      | Procesar compra     | Sí            |
 
-| Método | Endpoint                        | Descripción       | Auth Requerida |
-| ------ | ------------------------------- | ----------------- | -------------- |
-| GET    | `/api/carts/:cid`               | Obtener carrito   | No             |
-| POST   | `/api/carts`                    | Crear carrito     | No             |
-| POST   | `/api/carts/:cid/products/:pid` | Agregar producto  | No             |
-| DELETE | `/api/carts/:cid/products/:pid` | Eliminar producto | No             |
+### Vistas (`/`)
 
----
+| Ruta                | Descripción           | Acceso   |
+| ------------------- | --------------------- | -------- |
+| `/`                 | Home (login/registro) | Público  |
+| `/products`         | Catálogo de productos | Público  |
+| `/product/:pid`     | Detalle de producto   | Público  |
+| `/cart`             | Carrito de compras    | Usuarios |
+| `/profile`          | Perfil del usuario    | Usuarios |
+| `/realtimeproducts` | Admin de productos    | Admin    |
 
-## 🏗️ ARQUITECTURA
+## Arquitectura y seguridad
 
-### 1. Modelo de Usuario (`user.model.js`)
+### Autenticación JWT con cookies
+
+El sistema utiliza JWT almacenado en cookies HTTP-only para mayor seguridad:
 
 ```javascript
-{
-  first_name: String,      // Nombre del usuario
-  last_name: String,       // Apellido
-  email: String,           // Email único
-  age: Number,             // Edad (mínimo 18)
-  password: String,        // Contraseña hasheada
-  cart: ObjectId,          // Referencia al carrito
-  role: String,            // "user" o "admin"
-  createdAt: Date,         // Timestamp automático
-  updatedAt: Date          // Timestamp automático
-}
+// Al hacer login, el token se guarda en una cookie
+res.cookie("token", jwtToken, {
+  httpOnly: true, // No accesible desde JavaScript
+  sameSite: "strict", // Protección contra CSRF
+  maxAge: 24 * 60 * 60 * 1000, // 24 horas
+});
 ```
 
-**Características:**
-
-- ✅ Pre-save hook que hashea automáticamente la contraseña
-- ✅ Método `comparePassword()` para validar login
-- ✅ Método `toJSON()` que excluye el password en respuestas
-- ✅ Validaciones de formato y longitud
-
-### 2. Flujo de Autenticación
-
-```
-┌─────────────┐
-│   REGISTRO  │
-└──────┬──────┘
-       │
-       ├─► Validar datos
-       ├─► Verificar email único
-       ├─► Crear carrito vacío
-       ├─► Hashear password (bcrypt)
-       ├─► Guardar en MongoDB
-       └─► Generar JWT y retornar
-           │
-           ▼
-┌─────────────┐
-│    LOGIN    │
-└──────┬──────┘
-       │
-       ├─► Buscar usuario por email
-       ├─► Comparar password con hash
-       ├─► Si coincide: Generar JWT
-       └─► Retornar token
-           │
-           ▼
-┌─────────────┐
-│  PROTEGER   │
-│   RUTAS     │
-└──────┬──────┘
-       │
-       ├─► Cliente envía: Authorization: Bearer <token>
-       ├─► Middleware extrae y verifica token
-       ├─► Passport valida con estrategia JWT
-       ├─► Busca usuario en BD
-       └─► Agrega req.user y continúa
-```
-
-### 3. JWT (JSON Web Token)
-
-Un JWT consta de 3 partes separadas por puntos:
-
-```
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMyIsImVtYWlsIjoidGVzdEB0ZXN0LmNvbSJ9.signature
-│                                        │                                       │
-└─ HEADER (algoritmo y tipo)             └─ PAYLOAD (datos del usuario)         └─ SIGNATURE (firma)
-```
-
-**Contenido del Payload:**
-
-```json
-{
-  "id": "673e2a5b8f9c1a2b3c4d5e70",
-  "email": "usuario@example.com",
-  "role": "user",
-  "iat": 1732104000, // Issued At (fecha de creación)
-  "exp": 1732190400 // Expiration (fecha de expiración: 24h)
-}
-```
-
-### 4. Estrategia Passport JWT
+El middleware de autenticación extrae el token de la cookie o del header `Authorization`:
 
 ```javascript
-// Configuración
-passport.use(
-  new JwtStrategy(options, async (payload, done) => {
-    // payload = datos decodificados del token
-    const user = await User.findById(payload.id);
-
-    if (!user) return done(null, false);
-
-    return done(null, user); // req.user = user
-  })
-);
+const cookieExtractor = (req) => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies.token;
+  }
+  // Fallback a Authorization header
+  if (!token && req.headers.authorization) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+  return token;
+};
 ```
 
-**Opciones:**
+### Encriptación de contraseñas
 
-- `jwtFromRequest`: Extrae el token del header `Authorization: Bearer <token>`
-- `secretOrKey`: Clave secreta para verificar la firma
-
----
-
-## 🔒 SEGURIDAD
-
-### Encriptación de Contraseñas
+Las contraseñas se hashean automáticamente con bcrypt antes de guardarse:
 
 ```javascript
-// Hasheo automático en el modelo
+// Pre-save hook en el modelo User
 userSchema.pre("save", function (next) {
   if (!this.isModified("password")) return next();
-
   this.password = bcrypt.hashSync(this.password, 10);
   next();
 });
 
-// Comparación segura
-user.comparePassword = function (candidatePassword) {
+// Método para comparar contraseñas
+userSchema.methods.comparePassword = function (candidatePassword) {
   return bcrypt.compareSync(candidatePassword, this.password);
 };
 ```
 
-**¿Por qué bcrypt?**
+### Protección de rutas
 
-- ✅ Hash de una vía (no se puede revertir)
-- ✅ Salt automático (cada hash es único)
-- ✅ Ajustable (saltRounds controla la seguridad)
-- ✅ Resistente a rainbow tables
+Se utilizan diferentes middlewares según el nivel de protección:
 
-### Protección de Rutas
+- **requireAuth**: Valida que el usuario esté autenticado
+- **requireAdmin**: Valida que el usuario sea administrador
+- **requireAuthView**: Protege vistas y redirige al login
+- **redirectIfAuth**: Evita que usuarios autenticados accedan al login/registro
 
-```javascript
-// Ruta pública (sin autenticación)
-router.get("/products", controller.getAll);
+### Manejo de errores
 
-// Ruta protegida (requiere autenticación)
-router.get("/current", requireAuth, controller.current);
+Sistema centralizado de errores con clases personalizadas:
 
-// Ruta solo para admins (requiere autenticación + rol admin)
-router.delete("/products/:id", requireAuth, requireAdmin, controller.delete);
-```
+- `AppError`: Error base de la aplicación
+- `ValidationError`: Errores de validación (400)
+- `AuthenticationError`: Errores de autenticación (401)
+- `AuthorizationError`: Errores de autorización (403)
+- `NotFoundError`: Recursos no encontrados (404)
+- `ConflictError`: Conflictos de datos (409)
+- `InternalError`: Errores internos del servidor (500)
 
-### Buenas Prácticas Implementadas
+El middleware global captura todos los errores y retorna respuestas consistentes.
 
-✅ Contraseñas hasheadas con bcrypt (saltRounds=10)  
-✅ JWT con expiración de 24 horas  
-✅ Secret key en variables de entorno  
-✅ Validación de emails únicos  
-✅ CORS configurado  
-✅ Password excluido de respuestas JSON  
-✅ Manejo de errores centralizado
+## Uso del sistema
 
----
-
-## 🧪 TESTING
-
-Consulta la [Guía de Testing](GUIA_TESTING.md) para ejemplos detallados.
-
-### Testing Rápido con cURL
+### Registro de usuario
 
 ```bash
-# 1. Registrar usuario
-curl -X POST http://localhost:8080/api/sessions/register \
-  -H "Content-Type: application/json" \
-  -d '{"first_name":"Juan","last_name":"Pérez","email":"juan@test.com","age":25,"password":"pass123"}'
+POST /api/sessions/register
+Content-Type: application/json
 
-# 2. Login (guarda el token)
-TOKEN=$(curl -X POST http://localhost:8080/api/sessions/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"juan@test.com","password":"pass123"}' \
-  | jq -r '.data.token')
-
-# 3. Verificar sesión
-curl -X GET http://localhost:8080/api/sessions/current \
-  -H "Authorization: Bearer $TOKEN"
+{
+  "first_name": "Juan",
+  "last_name": "Pérez",
+  "email": "juan@example.com",
+  "age": 25,
+  "password": "miPassword123"
+}
 ```
 
----
+### Login
 
-## 📚 CONCEPTOS CLAVE
+```bash
+POST /api/sessions/login
+Content-Type: application/json
 
-### Diferencia entre Autenticación y Autorización
+{
+  "email": "juan@example.com",
+  "password": "miPassword123"
+}
+```
 
-| Autenticación                | Autorización               |
-| ---------------------------- | -------------------------- |
-| **"¿Quién eres?"**           | **"¿Qué puedes hacer?"**   |
-| Verificar identidad (login)  | Verificar permisos (roles) |
-| Usuario + contraseña → Token | Token → req.user.role      |
-| Middleware: `requireAuth`    | Middleware: `requireAdmin` |
+La respuesta incluirá una cookie con el JWT que se enviará automáticamente en las siguientes peticiones.
 
-### Stateless vs Stateful
+### Verificar sesión
 
-| JWT (Stateless)                  | Sessions (Stateful)             |
-| -------------------------------- | ------------------------------- |
-| No guarda estado en servidor     | Guarda sesión en servidor       |
-| Token contiene toda la info      | Token es solo un ID de sesión   |
-| Escalable horizontalmente        | Requiere sesiones compartidas   |
-| No se puede invalidar fácilmente | Se puede invalidar del servidor |
+```bash
+GET /api/sessions/current
+```
 
----
+Si el token es válido, retorna la información del usuario (sin la contraseña).
 
-## 🎯 CUMPLIMIENTO DE CRITERIOS
+### Agregar producto al carrito
 
-### ✅ Criterios Implementados
+```bash
+POST /api/carts/:cid/products/:pid
+Content-Type: application/json
 
-| Criterio                             | Estado | Detalles                             |
-| ------------------------------------ | ------ | ------------------------------------ |
-| Modelo User con campos requeridos    | ✅     | `user.model.js` con todos los campos |
-| Encriptación con bcrypt.hashSync     | ✅     | Pre-save hook en el modelo           |
-| Estrategias de Passport configuradas | ✅     | `passport.config.js` con JWT         |
-| Sistema de login con JWT             | ✅     | `sessions.controller.js`             |
-| Endpoint /api/sessions/current       | ✅     | Protegido con requireAuth            |
-| Estrategia "current"                 | ✅     | Configurada en Passport              |
-| Validación de token JWT              | ✅     | Middleware requireAuth               |
-| Error apropiado en token inválido    | ✅     | Status 401 con mensaje               |
+{
+  "quantity": 2
+}
+```
 
----
+### Procesar compra
 
-## 🚧 PRÓXIMAS MEJORAS
+```bash
+POST /api/carts/:cid/purchase
+```
 
-- [ ] Refresh tokens para mayor seguridad
-- [ ] Rate limiting para prevenir ataques
-- [ ] Recuperación de contraseña por email
-- [ ] Verificación de email al registrarse
-- [ ] OAuth (Google, Facebook)
-- [ ] Roles más granulares (vendedor, moderador, etc)
-- [ ] Logs de actividad de usuarios
-- [ ] Tests automatizados con Jest
+Genera un ticket de compra, actualiza el stock y vacía el carrito.
 
----
+## Características destacadas
 
-## 📖 RECURSOS
+### Sistema de notificaciones
 
-- [JWT.io](https://jwt.io/) - Decodificar tokens
-- [bcrypt docs](https://github.com/kelektiv/node.bcrypt.js) - Documentación de bcrypt
-- [Passport.js](http://www.passportjs.org/) - Documentación oficial
-- [MongoDB University](https://university.mongodb.com/) - Cursos gratuitos
+Incluye un sistema de notificaciones toast personalizado con 4 tipos: success, error, warning e info. Las notificaciones se muestran automáticamente y desaparecen después de 5 segundos.
 
----
+### Recuperación de contraseña
 
-## 👨‍💻 AUTOR
+Los usuarios pueden solicitar un email para restablecer su contraseña. El sistema genera un token temporal que expira en 1 hora.
 
-Desarrollado como parte del proyecto final del curso de Backend.
+### Panel de administración en tiempo real
 
----
+Los administradores pueden gestionar productos desde `/realtimeproducts`. Los cambios se reflejan en tiempo real gracias a Socket.io.
+
+### Validaciones frontend y backend
+
+Todas las operaciones están validadas tanto en el cliente como en el servidor, mejorando la experiencia de usuario y la seguridad.
+
+## Notas de desarrollo
+
+### Modelo de datos
+
+El proyecto sigue el patrón DAO (Data Access Object) para abstraer el acceso a la base de datos. Cada entidad tiene su propio DAO que maneja las operaciones CRUD.
+
+### Respuestas estandarizadas
+
+Se utiliza la clase `ResponseUtil` para mantener un formato consistente en todas las respuestas de la API:
+
+```json
+{
+  "status": "success",
+  "message": "Operación exitosa",
+  "data": { ... }
+}
+```
+
+### DTOs (Data Transfer Objects)
+
+Los datos del usuario se sanitizan con DTOs antes de enviarse al cliente, eliminando información sensible como contraseñas y tokens de recuperación.
+
+## Autor
+
+Nicolás Carcagno - Proyecto final CoderHouse Backend II
+
+## Licencia
+
+Este proyecto es de código abierto y está disponible bajo la licencia MIT.

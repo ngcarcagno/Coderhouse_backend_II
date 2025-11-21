@@ -1,16 +1,7 @@
 const passport = require("passport");
 
-/**
- * MIDDLEWARE: Requiere Autenticación
- * Protege rutas que necesitan que el usuario esté logueado
- * Usa la estrategia JWT de Passport
- */
 const requireAuth = (req, res, next) => {
-  // passport.authenticate('jwt', { session: false })
-  // - 'jwt': Usa la estrategia JWT que configuramos
-  // - session: false: No usamos sesiones (usamos tokens stateless)
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
-    // err: Error del servidor (problemas con BD, etc)
     if (err) {
       return res.status(500).json({
         status: "error",
@@ -19,7 +10,6 @@ const requireAuth = (req, res, next) => {
       });
     }
 
-    // user: false significa que el token es inválido o el usuario no existe
     if (!user) {
       return res.status(401).json({
         status: "error",
@@ -28,20 +18,12 @@ const requireAuth = (req, res, next) => {
       });
     }
 
-    // Si todo está bien, agregamos el usuario al request
-    // Ahora en las rutas protegidas podemos acceder a req.user
     req.user = user;
-    next(); // Continuamos al siguiente middleware o controlador
+    next();
   })(req, res, next);
 };
 
-/**
- * MIDDLEWARE: Requiere Rol Admin
- * Protege rutas que solo pueden acceder administradores
- * DEBE usarse DESPUÉS de requireAuth
- */
 const requireAdmin = (req, res, next) => {
-  // Verificamos que exista req.user (debería existir si pasó por requireAuth)
   if (!req.user) {
     return res.status(401).json({
       status: "error",
@@ -85,8 +67,39 @@ const requireRole = (roles) => {
   };
 };
 
+/**
+ * MIDDLEWARE: Requiere ser dueño del carrito
+ * Verifica que el usuario sea el dueño del carrito o admin
+ */
+const requireCartOwner = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({
+      status: "error",
+      message: "No autorizado - Debe estar autenticado",
+    });
+  }
+
+  const { cid } = req.params;
+
+  // Admin puede acceder a cualquier carrito
+  if (req.user.role === "admin") {
+    return next();
+  }
+
+  // Verificar que el carrito pertenezca al usuario
+  if (!req.user.cart || req.user.cart.toString() !== cid) {
+    return res.status(403).json({
+      status: "error",
+      message: "No puede modificar un carrito que no le pertenece",
+    });
+  }
+
+  next();
+};
+
 module.exports = {
   requireAuth,
   requireAdmin,
   requireRole,
+  requireCartOwner,
 };

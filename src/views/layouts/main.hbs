@@ -4,7 +4,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{title}}</title>
     <link rel="stylesheet" href="/static/css/site.css" />
-    <script defer src="/static/js/site.js"></script>
+    <link rel="stylesheet" href="/static/css/auth.css" />
+    <link rel="stylesheet" href="/static/css/notifications.css" />
   </head>
   <body>
     {{{body}}}
@@ -38,5 +39,9 @@
         </div>
       </div>
     </div>
+
+    <!-- Scripts globales - cargar primero -->
+    <script src="/static/js/notifications.js"></script>
+    <script src="/static/js/site.js"></script>
   </body>
 </html>

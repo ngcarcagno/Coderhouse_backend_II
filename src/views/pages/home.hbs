@@ -4,10 +4,44 @@
     <div class="hero-text">
       <h1>Tienda de Neumáticos</h1>
       <p>Encuentra el neumático ideal para tu vehículo. Filtra, ordena y agrégalos al carrito en segundos.</p>
-      <div class="hero-actions">
-        <a class="btn primary" href="/products">Ver catálogo</a>
-        <a class="btn" href="/realtimeproducts">Administrar (Real Time)</a>
-      </div>
+      
+      {{#if user}}
+        <!-- Usuario autenticado -->
+        <div class="user-welcome" style="margin: 20px 0; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: white;">
+          <p style="margin: 0; font-size: 18px;">👋 Bienvenido, <strong>{{user.first_name}}</strong>!</p>
+          <p style="margin: 8px 0 0 0; font-size: 14px; opacity: 0.9;">{{user.email}}</p>
+        </div>
+        
+        <div class="hero-actions">
+          <a class="btn primary" href="/products">Ver catálogo</a>
+          <a class="btn" href="/my-tickets">Mis Compras</a>
+        </div>
+        
+        <div class="hero-links" style="margin-top: 24px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+          <a href="/profile" style="color: #667eea; text-decoration: none; font-size: 14px;">Mi Perfil</a>
+          {{#if (eq user.role "admin")}}
+            <span style="color: #ccc;">•</span>
+            <a href="/realtimeproducts" style="color: #667eea; text-decoration: none; font-size: 14px;">👑 Administrar</a>
+          {{/if}}
+        </div>
+      {{else}}
+        <!-- Usuario no autenticado -->
+        <div class="guest-message" style="margin: 20px 0; padding: 16px; background: #f7fafc; border-radius: 12px; border: 2px solid #e2e8f0;">
+          <p style="margin: 0; font-size: 16px; color: #2d3748;">¿Ya tienes una cuenta? <strong>Inicia sesión</strong> para ver tus compras y perfil.</p>
+          <p style="margin: 8px 0 0 0; font-size: 14px; color: #718096;">¿Eres nuevo? <strong>Crea tu cuenta</strong> para comenzar a comprar.</p>
+        </div>
+        
+        <div class="hero-actions">
+          <a class="btn primary" href="/login">Iniciar Sesión</a>
+          <a class="btn" href="/register">Crear Cuenta</a>
+        </div>
+        
+        <div class="hero-links" style="margin-top: 24px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+          <a href="/products" style="color: #667eea; text-decoration: none; font-size: 14px;">Ver Catálogo</a>
+          <span style="color: #ccc;">•</span>
+          <a href="/realtimeproducts" style="color: #667eea; text-decoration: none; font-size: 14px;">Administrar</a>
+        </div>
+      {{/if}}
     </div>
     <div class="hero-visual">
       <img

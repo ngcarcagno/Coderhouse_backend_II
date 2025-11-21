@@ -16,7 +16,6 @@ const ProductsDaoDB = require("./src/dao/products.dao.db");
 const ProductsService = require("./src/services/products.service");
 const { extractDocs } = require("./src/utils/helpers");
 
-// Conectar a MongoDB antes de instanciar DAOs que lo usen
 if (config.database && config.database.uri) {
   mongoose
     .connect(config.database.uri, {
@@ -36,7 +35,6 @@ if (config.database && config.database.uri) {
 const productsDao = new ProductsDaoDB();
 const productsService = new ProductsService(productsDao);
 
-//! ---------- HANDLEBARS --------------
 app.engine(
   "hbs",
   handlebars.engine({
@@ -50,6 +48,14 @@ app.engine(
         if (args.length && typeof args[args.length - 1] === "object") args.pop();
         return args.join("");
       },
+      // eq helper: compares two values for equality
+      eq: function (a, b) {
+        return a === b;
+      },
+    },
+    runtimeOptions: {
+      allowProtoPropertiesByDefault: true,
+      allowProtoMethodsByDefault: true,
     },
   })
 );
@@ -57,8 +63,11 @@ app.set("view engine", "hbs");
 app.set("views", paths.views);
 
 //! --------- MIDDLEWARES --------------
+const cookieParser = require("cookie-parser"); // Middleware para cookies
+
 app.use(express.json()); // Middleware to parse JSON
 app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded data
+app.use(cookieParser()); // Middleware to parse cookies
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
@@ -152,6 +161,16 @@ io.on("connection", (socket) => {
     console.log("❌ Usuario desconectado:", socket.id);
   });
 });
+
+//! --------- MIDDLEWARE DE ERRORES --------------
+// Debe ir AL FINAL, después de todas las rutas
+const { notFound, errorHandler } = require("./src/middlewares/error.middleware");
+
+// Middleware para rutas no encontradas (404)
+app.use(notFound);
+
+// Middleware global de manejo de errores
+app.use(errorHandler);
 
 server.listen(config.PORT, () => {
   console.log(`🚀 Servidor escuchando en http://localhost:${config.PORT}`);

@@ -1,0 +1,23 @@
+<div class="tickets-page">
+  {{> header title="Mis Compras" }}
+  
+  <div class="tickets-container">
+    <div class="tickets-header">
+      <h2>Historial de Compras</h2>
+      <a href="/products" class="btn btn-secondary">Seguir Comprando</a>
+    </div>
+    
+    <div id="ticketsList" class="tickets-list">
+      <div class="loading">Cargando compras...</div>
+    </div>
+    
+    <div id="emptyState" class="empty-state" style="display:none;">
+      <div class="empty-icon">📋</div>
+      <h3>No tienes compras todavía</h3>
+      <p>Explora nuestro catálogo y realiza tu primera compra</p>
+      <a href="/products" class="btn btn-primary">Ver Productos</a>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/tickets.js"></script>

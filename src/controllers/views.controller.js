@@ -9,7 +9,11 @@ class ViewsController {
   // Renderizar la página de inicio
   renderHome = (req, res) => {
     try {
-      res.render("pages/home", { title: "API Products" });
+      // req.user se establece por el middleware loadUser
+      res.render("pages/home", {
+        title: "API Products",
+        user: req.user || null,
+      });
     } catch (error) {
       console.error("Error en la ruta raíz:", error);
       res.status(500).send("Error en el servidor");
@@ -197,6 +201,62 @@ class ViewsController {
     } catch (error) {
       console.error("Error subiendo miniatura:", error);
       return res.status(500).send("Error subiendo archivo");
+    }
+  };
+
+  // Nuevas vistas de autenticación
+  renderLogin = (req, res) => {
+    try {
+      res.render("pages/login", { title: "Iniciar Sesión" });
+    } catch (error) {
+      console.error("Error rendering login:", error);
+      res.status(500).send("Error al cargar página");
+    }
+  };
+
+  renderRegister = (req, res) => {
+    try {
+      res.render("pages/register", { title: "Crear Cuenta" });
+    } catch (error) {
+      console.error("Error rendering register:", error);
+      res.status(500).send("Error al cargar página");
+    }
+  };
+
+  renderProfile = (req, res) => {
+    try {
+      res.render("pages/profile", { title: "Mi Perfil" });
+    } catch (error) {
+      console.error("Error rendering profile:", error);
+      res.status(500).send("Error al cargar página");
+    }
+  };
+
+  renderForgotPassword = (req, res) => {
+    try {
+      res.render("pages/forgot-password", { title: "Recuperar Contraseña" });
+    } catch (error) {
+      console.error("Error rendering forgot password:", error);
+      res.status(500).send("Error al cargar página");
+    }
+  };
+
+  renderResetPassword = (req, res) => {
+    try {
+      const { token } = req.params;
+      res.render("pages/reset-password", { title: "Restablecer Contraseña", token });
+    } catch (error) {
+      console.error("Error rendering reset password:", error);
+      res.status(500).send("Error al cargar página");
+    }
+  };
+
+  renderTickets = (req, res) => {
+    try {
+      res.render("pages/tickets", { title: "Mis Compras" });
+    } catch (error) {
+      console.error("Error rendering tickets:", error);
+      res.status(500).send("Error al cargar página");
     }
   };
 }

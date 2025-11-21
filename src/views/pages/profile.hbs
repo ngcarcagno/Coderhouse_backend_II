@@ -1,0 +1,49 @@
+<div class="profile-page">
+  {{> header title="Mi Perfil" }}
+  
+  <div class="profile-container">
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <span class="avatar-icon">👤</span>
+        </div>
+        <div id="profileInfo" class="profile-info">
+          <div class="loading">Cargando...</div>
+        </div>
+      </div>
+      
+      <div class="profile-sections">
+        <div class="profile-section">
+          <h3>Información Personal</h3>
+          <div id="personalInfo" class="info-grid">
+            <!-- Se llena dinámicamente -->
+          </div>
+        </div>
+        
+        <div class="profile-section">
+          <h3>Mi Carrito</h3>
+          <div id="cartInfo" class="cart-info">
+            <!-- Se llena dinámicamente -->
+          </div>
+        </div>
+        
+        <div class="profile-section">
+          <h3>Acciones Rápidas</h3>
+          <div class="profile-actions">
+            <a href="/products" class="btn btn-secondary">
+              🛍️ Ver Productos
+            </a>
+            <a href="/my-tickets" class="btn btn-secondary">
+              📋 Mis Compras
+            </a>
+            <button id="logoutBtn" class="btn btn-outline">
+              🚪 Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/profile.js"></script>

@@ -32,6 +32,11 @@ const userSchema = new mongoose.Schema(
       required: [true, "La contraseña es obligatoria"],
       minlength: [6, "La contraseña debe tener al menos 6 caracteres"],
     },
+    previousPassword: {
+      type: String,
+      // Almacena el hash de la contraseña anterior para evitar reutilización
+      default: null,
+    },
     cart: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Cart",
@@ -55,6 +60,11 @@ userSchema.pre("save", function (next) {
   }
 
   try {
+    // Guardar el hash anterior antes de cambiar la contraseña
+    if (this.password && !this.isNew) {
+      this.previousPassword = this._previousPasswordHash || this.password;
+    }
+
     const hashedPassword = bcrypt.hashSync(this.password, 10);
     this.password = hashedPassword;
     next();
@@ -66,6 +76,12 @@ userSchema.pre("save", function (next) {
 // MÉTODO DE INSTANCIA: Para comparar contraseñas
 userSchema.methods.comparePassword = function (candidatePassword) {
   return bcrypt.compareSync(candidatePassword, this.password);
+};
+
+// MÉTODO DE INSTANCIA: Verificar si la contraseña es igual a la anterior
+userSchema.methods.isSameAsPreviousPassword = function (candidatePassword) {
+  if (!this.previousPassword) return false;
+  return bcrypt.compareSync(candidatePassword, this.previousPassword);
 };
 
 // MÉTODO DE INSTANCIA: Para obtener datos sin información sensible
